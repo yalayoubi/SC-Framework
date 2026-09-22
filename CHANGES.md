@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.15.2 (22-09-2026)
+- Fix package-wide import failure with beartype >= 0.22 by replacing `numpy.typing.NDArray` annotations with `np.ndarray`
+- Fix `utils.adata.tidy_layers` silently discarding `AnnData.X` with anndata >= 0.13, which lists `.X` as a layer named `None`
+- Fix `tools.qc_filter.automatic_thresholds` overwriting NaN values in the caller's `adata.obs`/`adata.var`
+- Make `muon` an optional import in `utils.decorator` and `plotting.clustering`
+- Import `scvi` only where it is used, so `tools.norm_correct` no longer requires the `batch_correction` extra
+- Replace `matplotlib.cm.get_cmap`, removed in matplotlib 3.9
+- Pin `pandas < 3`, as UpSetPlot 0.9.0 is incompatible with its mandatory copy-on-write
+
 ## 0.15.1 (15-05-2026)
 - from_mtx: Fix read option when providing str instead of dict
 - Reduce package build size (#448)
