@@ -4,7 +4,10 @@ import numpy as np
 import scanpy as sc
 import matplotlib.pyplot as plt
 import warnings
-import muon as mu
+try:
+    import muon as mu
+except ImportError:  # muon is an optional dependency, see the 'multiome' extra
+    mu = None
 
 from beartype import beartype
 from beartype.typing import Literal, Tuple, Optional, Any
@@ -15,10 +18,13 @@ from sctoolbox.plotting.general import _save_figure
 from sctoolbox._settings import settings
 logger = settings.logger
 
+# MuData is only accepted when muon is available
+_ADATA_TYPES = sc.AnnData if mu is None else sc.AnnData | mu.MuData
+
 
 @deco.log_anndata
 @beartype
-def search_clustering_parameters(adata: sc.AnnData | mu.MuData,
+def search_clustering_parameters(adata: _ADATA_TYPES,
                                  method: Literal["leiden"] = "leiden",
                                  resolution_range: Tuple[float | int, float | int, float | int] = (0.1, 1, 0.1),
                                  embedding: str = "X_umap",
