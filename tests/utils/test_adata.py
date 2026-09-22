@@ -381,7 +381,9 @@ def test_tidy_layer_keep_and_X(adata, keep_X, replace_X, keep):
         if keep == "all":
             assert len(adata.layers) <= len(adata_out.layers)  # assert that no layers are removed
         else:
-            assert len(adata_out.layers) == len(keep) and all(layer in keep for layer in adata_out.layers.keys())  # assert the correct layers are removed
+            layers_out = [name for name in adata_out.layers.keys() if name is not None]  # anndata>=0.13 lists .X as a layer named None
+            assert sorted(layers_out) == sorted(keep)  # assert the correct layers are removed
+            assert adata_out.X is not None  # deleting the None alias would silently drop .X
 
         if replace_X:
             # assert the original .X is replaced with the right layer
