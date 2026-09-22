@@ -4,12 +4,18 @@ import scanpy as sc
 import functools
 import pandas as pd
 import matplotlib
-import muon as mu
+try:
+    import muon as mu
+except ImportError:  # muon is an optional dependency, see the 'multiome' extra
+    mu = None
 
 from beartype.typing import Callable, Any
 from beartype import beartype
 
 import sctoolbox.utils as utils
+
+# MuData is only loggable when muon is available
+_ADATA_TYPES = (sc.AnnData,) if mu is None else (sc.AnnData, mu.MuData)
 
 
 @beartype
@@ -36,7 +42,7 @@ def log_anndata(func: Callable) -> Callable:
         # find anndata object within parameters (if there are more use the first one)
         adata = None
         for param in list(args) + list(kwargs.values()):
-            if isinstance(param, sc.AnnData) or isinstance(param, mu.MuData):
+            if isinstance(param, _ADATA_TYPES):
                 adata = param
                 break
 
@@ -58,10 +64,11 @@ def log_anndata(func: Callable) -> Callable:
         args_repr = {f"arg{i + 1}": element for i, element in enumerate(args)}  # create dict with arg1, arg2, ... as keys instead of list to prevent errors with wrongly shaped arrays
         kwargs_repr = kwargs
         convert = {sc.AnnData: repr,
-                   mu.MuData: repr,
                    tuple: list,
                    matplotlib.axes._axes.Axes: str,
                    dict: str}  # nested dicts are not allowed
+        if mu is not None:
+            convert[mu.MuData] = repr
         for typ, convfunc in convert.items():
             args_repr = {param: convfunc(element) if isinstance(element, typ) else element for param, element in args_repr.items()}
             kwargs_repr = {param: convfunc(element) if isinstance(element, typ) else element for param, element in kwargs_repr.items()}
