@@ -7,7 +7,6 @@ import copy
 import multiprocessing as mp
 import scanpy as sc
 import scanpy.external as sce
-import scvi
 
 from beartype.typing import Optional, Any, Union, Literal, Callable
 from beartype import beartype
@@ -556,6 +555,8 @@ def batch_correction(adata: sc.AnnData,  # noqa: C901
 
         dim_red.dim_red(anndata=adata, inplace=True, **dim_red_kwargs)
     elif method == "scvi":
+        import scvi  # optional dependency; presence is checked by check_module above
+
         # TODO don't ignore mask vars meaning only use highly variable genes for correction. See pca mask_var/use_highly_variable
         if isinstance(batch_key, list):
             # TODO enable continuous_covariate_keys
