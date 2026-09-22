@@ -1299,7 +1299,7 @@ def connectionPlot(adata: sc.AnnData,  # noqa: C901
 
     # create colorramp
     if line_colors:
-        cmap = matplotlib.cm.get_cmap(line_colors, len(receptors))
+        cmap = matplotlib.colormaps[line_colors].resampled(len(receptors))
         colors = cmap(range(len(receptors)))
     else:
         colors = ["black"] * len(receptors)
