@@ -167,6 +167,28 @@ def load_h5ad(path: str) -> sc.AnnData:
     return adata
 
 
+@beartype
+def _layer_names(adata: sc.AnnData) -> list[str]:
+    """
+    Get the real layer names of an AnnData object.
+
+    anndata>=0.13 exposes `AnnData.X` as a layer named `None`. That alias is not a
+    layer of its own and has to be excluded whenever layers are listed or removed.
+
+    Parameters
+    ----------
+    adata : sc.AnnData
+        AnnData object to get the layer names from.
+
+    Returns
+    -------
+    list[str]
+        Names of the layers stored in `AnnData.layers`.
+    """
+
+    return [name for name in adata.layers.keys() if name is not None]
+
+
 @deco.log_anndata
 @beartype
 def save_h5ad(adata: sc.AnnData, path: str, report: Optional[list[str]] = None, **kwargs: Any) -> None:
@@ -214,13 +236,14 @@ def save_h5ad(adata: sc.AnnData, path: str, report: Optional[list[str]] = None, 
 
     # generate report
     if settings.report_dir and report:
+        layer_names = _layer_names(adata)
         with open(Path(settings.report_dir) / report[0], "w") as f:
             f.write("\n".join([
                 "## Dataset",
                 f"{adata.shape[0]} observations x {adata.shape[1]} variables",
                 f"Observation information: {', '.join(adata.obs.columns)}",
                 f"Variable information: {', '.join(adata.var.columns)}",
-                f"Additional data layers: {', '.join(adata.layers.keys())}" if adata.layers.keys() else ""
+                f"Additional data layers: {', '.join(layer_names)}" if layer_names else ""
             ]))
 
         # method
@@ -553,7 +576,7 @@ def prepare_for_cellxgene(adata: sc.AnnData,  # noqa: C901
         If ``layer`` is set but no layer with that name exists.
     """
     if layer and layer not in adata.layers:
-        raise ValueError(f"No layer named '{layer}' found in the AnnData. Available layers are {','.join(adata.layers.keys())}.")
+        raise ValueError(f"No layer named '{layer}' found in the AnnData. Available layers are {','.join(_layer_names(adata))}.")
 
     def clean_section(obj: sc.AnnData, axis: str = "obs", keep: Optional[list[str]] = None, delete: Optional[list[str]] = None, rename: Optional[dict[str, str]] = None) -> None:  # noqa: C901
         """
@@ -798,11 +821,11 @@ def tidy_layers(  # noqa: C901
         if replace_X in adata.layers:
             adata.X = adata.layers[replace_X].copy()
         else:
-            raise KeyError(f"{replace_X} is not a valid AnnData.layer name ({list(adata.layers.keys())}).")
+            raise KeyError(f"{replace_X} is not a valid AnnData.layer name ({_layer_names(adata)}).")
 
     # ----- keep ----- #
     if keep != "all":
-        for layer in list(adata.layers.keys()):
+        for layer in _layer_names(adata):
             if layer not in keep:
                 del adata.layers[layer]
 
