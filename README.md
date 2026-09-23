@@ -23,27 +23,27 @@ https://loosolab.pages.gwdg.de/software/sc_framework/
 ## 1. Environment & Package installation
 1. Download the repository. This will download the repository to your current folder.
 ```
-git clone https://gitlab.gwdg.de/loosolab/software/sc_framework.git
+git clone https://github.com/yalayoubi/SC-Framework.git
 ```
 2. Change the working directory to the newly created repository directory.
 ```
-cd sc_framework
+cd SC-Framework
 ```
-3. Install analysis environment. Note: using `mamba` is faster than `conda`, but this requires mamba to be installed.
+3. Switch to the fix branch.
 ```
-mamba env create -f sctoolbox_env.yml
+git checkout fix/dependency-compatibility
 ```
-4. Activate the environment.
+4. Install analysis environment.
+```
+conda env create -f sctoolbox_env.yml
+```
+5. Activate the environment.
 ```
 conda activate sctoolbox
 ```
-5. Install the sctoolbox framework into the environment.
+6. Install the sctoolbox framework into the environment.
 ```
-pip install .[all]
-```
-or
-```
-pip install SC-Framework[all]
+pip install .[core-rna]
 ```
 
 ## 2. Jupyter setup

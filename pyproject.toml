@@ -179,6 +179,9 @@ multiome = [
 core = [
     'SC-Framework[converter,atac,interactive,batch_correction]'
 ]
+core-rna = [
+    'SC-Framework[converter,interactive,batch_correction,gsea,annotation,proportion,deseq2]'
+]
 downstream = [
     'SC-Framework[receptor_ligand,pseudotime,gsea,deseq2,annotation,proportion,velocity,palantir,pilot,multiome]'
 ]
