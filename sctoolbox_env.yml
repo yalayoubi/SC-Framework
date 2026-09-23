@@ -6,6 +6,9 @@ channels:
     - bioconda
     - conda-forge
 dependencies:
+# pin python to the range the sctoolbox package supports (see requires-python in pyproject.toml);
+# without this conda resolves the newest python and the following pip install fails
+  - python>=3.9,<3.14
 # jupyter dependencies
   - notebook==6.5.2
   - ipykernel  # needed to register environment as jupyter kernel

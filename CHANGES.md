@@ -8,6 +8,8 @@
 - Import `scvi` only where it is used, so `tools.norm_correct` no longer requires the `batch_correction` extra
 - Replace `matplotlib.cm.get_cmap`, removed in matplotlib 3.9
 - Pin `pandas < 3`, as UpSetPlot 0.9.0 is incompatible with its mandatory copy-on-write
+- Pin python in `sctoolbox_env.yml`; without it conda resolved a python the package then refused to install on
+- Support python 3.13 (`requires-python` raised to `<3.14`)
 
 ## 0.15.1 (15-05-2026)
 - from_mtx: Fix read option when providing str instead of dict
