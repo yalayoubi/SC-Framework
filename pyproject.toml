@@ -131,9 +131,11 @@ interactive = [
 ]
 batch_correction = [
     'bbknn',
-    'harmonypy<=0.0.10',  # latest scanpy version is incompatible with newest harmonypy version: https://github.com/scverse/scanpy/issues/3940
-    'scanorama',
-    'scvi-tools'
+    'harmonypy<=0.0.10',
+    'scanorama'
+]
+scvi = [
+    'scvi-tools'  # pulls torch + CUDA runtime (~1.7 GB); opt-in
 ]
 receptor_ligand = [
     'pycirclize>=1.10.1',
